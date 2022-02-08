@@ -2,5 +2,15 @@ from django.contrib import admin
 
 from .models import Follow, User
 
-admin.site.register(User)
-admin.site.register(Follow)
+
+class UserAdmin(admin.ModelAdmin):
+    list_filter = ('email', 'username')
+
+
+class FollowAdmin(admin.ModelAdmin):
+    list_filter = ('user', )
+    list_display = ('user', 'author')
+
+
+admin.site.register(User, UserAdmin)
+admin.site.register(Follow, FollowAdmin)
