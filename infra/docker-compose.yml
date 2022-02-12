@@ -3,6 +3,8 @@ services:
 
   frontend:
     image: dimaleonov93/foodgram-frontend:v1
+    volumes:
+      - ../frontend/:/app/result_build/
     depends_on:
       - backend
   nginx:
