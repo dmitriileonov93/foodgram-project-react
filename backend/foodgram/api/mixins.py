@@ -81,7 +81,8 @@ class RecpieActionsMixin:
         permission_classes=[permissions.IsAuthenticated, ],
     )
     def download_shopping_cart(self, request):
-        pdfmetrics.registerFont(TTFont('Helvetica2', 'Helvetica.ttc'))
+        pdfmetrics.registerFont(TTFont(
+            'Helvetica2', '/app/fonts/Helvetica.ttc'))
         buffer = io.BytesIO()
         c = canvas.Canvas(buffer, pagesize=letter, bottomup=0)
         text_obj = c.beginText()
