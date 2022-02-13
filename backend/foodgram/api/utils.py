@@ -52,4 +52,3 @@ class RecpieDownloadPDFMixin:
         return FileResponse(
             buffer, as_attachment=True, filename='shopping_cart.pdf'
         )
-

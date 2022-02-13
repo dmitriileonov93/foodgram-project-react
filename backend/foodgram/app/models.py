@@ -2,7 +2,7 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 
 
 from users.models import User
@@ -140,8 +140,8 @@ class IngredientInRecipe(models.Model):
     amount = models.PositiveIntegerField('Количество ингредиента')
 
     class Meta:
-        verbose_name = 'Связь "Ингридиент - Рецепт"'
-        verbose_name_plural = 'Связи "Ингридиент - Рецепт"'
+        verbose_name = 'Связь "Ингредиент - Рецепт"'
+        verbose_name_plural = 'Связи "Ингредиент - Рецепт"'
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
