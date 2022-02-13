@@ -186,7 +186,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        print(validated_data)
         if 'ingredientinrecipe_set' in validated_data:
             instance.ingredients.clear()
             ingredients = validated_data.pop('ingredientinrecipe_set')
@@ -202,6 +201,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             instance.name = validated_data.get('name', instance.name)
         if 'text' in validated_data:
             instance.text = validated_data.get('text', instance.text)
+        if 'image' in validated_data:
+            instance.text = validated_data.get('image', instance.text)
         if 'cooking_time' in validated_data:
             instance.cooking_time = validated_data.get(
                 'cooking_time', instance.cooking_time)
