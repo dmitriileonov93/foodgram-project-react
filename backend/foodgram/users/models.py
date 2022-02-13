@@ -30,9 +30,9 @@ class Follow(models.Model):
         verbose_name='Подписан',
         help_text='Тот, на кого подписался')
 
-    def __str__(self):
-        return f'Подписка {self.user.username}'
-
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'Подписка {self.user.username}'

@@ -15,9 +15,10 @@ class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ('follow_count',)
     inlines = (IngredientInRecipeInline, )
 
-    # @admin.display(description='Кол-во добавлений в избранное')
     def follow_count(self, obj):
         return RecipeInFavorite.objects.filter(recipe=obj).count()
+
+    follow_count.short_description = 'Кол-во добавлений в избранное'
 
 
 class FavoriteAdmin(admin.ModelAdmin):

@@ -7,5 +7,5 @@ FOODGRAM поможет составить список продуктов дл�
 2. Создайте файл .env для переменных окружения в папке "foodgram-project-react/backend/foodgram/foodgram/" : "touch .env"
 3. Добайте в этот файл переменные окруженмя: "echo <ПЕРЕМЕННАЯ>=<значение> >> .env"
 4. Запуск приложения из дериктории "foodgram-project-react/inftra": терминале выполнить команду "docker-compose up -d"
-5. Создать суперпользователя: "docker-compose exec infra-backend-1 python3 manage.py createsuperuser"
-6. Заполнение БД тестовыми данными: "docker-compose exec infra-backend-1 python3 manage.py loaddata fixtures.json"
+5. Создать суперпользователя: "docker exec infra_backend_1 python3 manage.py createsuperuser"
+6. Заполнение БД тестовыми данными: "docker exec infra_backend_1 python3 manage.py loaddata fixtures.json"

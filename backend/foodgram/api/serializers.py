@@ -52,10 +52,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class SetPasswordSerializer(serializers.Serializer):
-    model = User
-
     current_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+    def validate_current_password(self, value):
+        me = self.context['request'].user
+        if not me.check_password(value):
+            raise serializers.ValidationError('Неверный пароль!')
+        return value
 
 
 class TagSerializer(serializers.ModelSerializer):

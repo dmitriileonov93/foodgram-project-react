@@ -9,17 +9,18 @@ from users.models import Follow, User
 from .filters import RecipeFilter
 from .mixins import CreateListRetrieveViewSet, RecpieActionsMixin
 from .paginations import FoodgramPagination
-from .permissions import IsAuthorOrReadOnly, UsersPermission
+from .permissions import IsAuthorOrReadOnly, FoodgramUsersPermission
 from .serializers import (IngredientSerializer, RecipeCreateSerializer,
                           RecipeSerializer, SetPasswordSerializer,
                           SubscriptionsSerializer, TagSerializer,
                           UserCreateSerializer, UserSerializer)
+from .utils import RecpieDownloadPDFMixin
 
 
 class UserViewSet(CreateListRetrieveViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [UsersPermission, ]
+    permission_classes = [FoodgramUsersPermission, ]
     pagination_class = FoodgramPagination
 
     def get_serializer_class(self):
@@ -33,12 +34,8 @@ class UserViewSet(CreateListRetrieveViewSet):
     )
     def me(self, request):
         me = get_object_or_404(User, pk=request.user.pk)
-        if request.method == 'GET':
-            serializer = self.get_serializer(me)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        serializer = self.get_serializer(me)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(
         methods=['POST'],
@@ -47,16 +44,12 @@ class UserViewSet(CreateListRetrieveViewSet):
     )
     def set_password(self, request):
         me = get_object_or_404(User, pk=request.user.pk)
-        serializer = SetPasswordSerializer(data=request.data)
-        if serializer.is_valid():
-            if not me.check_password(serializer.data.get("current_password")):
-                return Response({"current_password": ["Wrong password."]},
-                                status=status.HTTP_400_BAD_REQUEST)
-            me.set_password(serializer.data.get("new_password"))
-            me.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = SetPasswordSerializer(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        me.set_password(serializer.data.get("new_password"))
+        me.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=False,
@@ -103,7 +96,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = [permissions.AllowAny, ]
     pagination_class = None
@@ -116,8 +108,9 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-class RecipeViewSet(viewsets.ModelViewSet, RecpieActionsMixin):
-    queryset = Recipe.objects.all()
+class RecipeViewSet(viewsets.ModelViewSet,
+                    RecpieActionsMixin,
+                    RecpieDownloadPDFMixin):
     serializer_class = RecipeSerializer
     permission_classes = [IsAuthorOrReadOnly, ]
     filter_backends = (DjangoFilterBackend, )

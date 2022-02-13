@@ -2,6 +2,8 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
+
 
 from users.models import User
 
@@ -10,18 +12,22 @@ class Ingredient(models.Model):
     name = models.CharField('Название', max_length=200)
     measurement_unit = models.CharField('Единица измерения', max_length=200)
 
-    def __str__(self):
-        return f'{self.name}, {self.measurement_unit}'
-
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return f'{self.name}, {self.measurement_unit}'
 
 
 class Tag(models.Model):
     name = models.CharField('Название', max_length=200)
     color = ColorField('Цвет', default='#FF0000')
     slug = models.SlugField('Slug', max_length=200, unique=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -30,10 +36,6 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
-
-    class Meta:
-        verbose_name = 'Тег'
-        verbose_name_plural = 'Теги'
 
 
 class Recipe(models.Model):
@@ -70,12 +72,12 @@ class Recipe(models.Model):
         ),
     ])
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+
+    def __str__(self):
+        return self.name
 
 
 class RecipeInFavorite(models.Model):
@@ -96,12 +98,12 @@ class RecipeInFavorite(models.Model):
         verbose_name='Рецепт',
         help_text='Избранный рецепт')
 
-    def __str__(self):
-        return f'Избранное {self.user.username}'
-
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
+
+    def __str__(self):
+        return f'Избранное {self.user.username}'
 
 
 class RecipeInCart(models.Model):
@@ -122,12 +124,12 @@ class RecipeInCart(models.Model):
         verbose_name='Рецепт',
         help_text='Рецепт в корзину покупок')
 
-    def __str__(self):
-        return f'Корзина покупок {self.user.username}'
-
     class Meta:
         verbose_name = 'Список'
         verbose_name_plural = 'Списки'
+
+    def __str__(self):
+        return f'Корзина покупок {self.user.username}'
 
 
 class IngredientInRecipe(models.Model):
@@ -137,9 +139,22 @@ class IngredientInRecipe(models.Model):
         Ingredient, on_delete=models.CASCADE, verbose_name='Ингредиент')
     amount = models.PositiveIntegerField('Количество ингредиента')
 
-    def __str__(self):
-        return f'{self.recipe}, {self.ingredient}, {self.amount}'
-
     class Meta:
         verbose_name = 'Связь "Ингридиент - Рецепт"'
         verbose_name_plural = 'Связи "Ингридиент - Рецепт"'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient'
+            )
+        ]
+
+    def clean(self):
+        error_dict = {}
+        if self.amount <= 0:
+            error_dict['amount'] = 'Строго больше 0!'
+        if error_dict:
+            raise ValidationError(error_dict)
+
+    def __str__(self):
+        return f'{self.recipe}, {self.ingredient}, {self.amount}'
