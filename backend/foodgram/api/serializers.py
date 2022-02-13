@@ -202,7 +202,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         if 'text' in validated_data:
             instance.text = validated_data.get('text', instance.text)
         if 'image' in validated_data:
-            instance.text = validated_data.get('image', instance.text)
+            instance.image = validated_data.get('image', instance.image)
         if 'cooking_time' in validated_data:
             instance.cooking_time = validated_data.get(
                 'cooking_time', instance.cooking_time)
