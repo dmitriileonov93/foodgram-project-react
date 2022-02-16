@@ -3,7 +3,7 @@ name: foodgram workflow
 on: [push]
 
 jobs:
-  tests:
+  test_flake8:
     runs-on: ubuntu-latest
 
     steps:
