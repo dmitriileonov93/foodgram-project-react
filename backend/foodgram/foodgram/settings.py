@@ -1,7 +1,5 @@
 import os
-from django.conf import settings
-from django.conf.urls.static import static
-from datetime import timedelta
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -41,9 +39,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        ),
+    ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 1,
+    'PAGE_SIZE': 1
 }
 
 DJOSER = {
