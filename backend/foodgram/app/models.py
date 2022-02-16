@@ -1,9 +1,8 @@
 from colorfield.fields import ColorField
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
-from django.core.exceptions import ValidationError
-
 
 from users.models import User
 

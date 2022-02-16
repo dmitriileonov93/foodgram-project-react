@@ -9,7 +9,7 @@ from users.models import Follow, User
 from .filters import RecipeFilter
 from .mixins import CreateListRetrieveViewSet, RecpieActionsMixin
 from .paginations import FoodgramPagination
-from .permissions import IsAuthorOrReadOnly, FoodgramUsersPermission
+from .permissions import FoodgramUsersPermission, IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeCreateSerializer,
                           RecipeSerializer, SetPasswordSerializer,
                           SubscriptionsSerializer, TagSerializer,
